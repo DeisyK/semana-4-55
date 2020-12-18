@@ -1,6 +1,6 @@
 const {Usuario} = require('../models/');
 const bcrypt = require('bcryptjs')
-const servToken = require('./services/token')
+const servToken = require('../services/token')
 
 
 module.exports = {
