@@ -6,7 +6,7 @@ const router = routerx();
 
 
 router.get('/list', usuarioController.list);
-router.get('/login', usuarioController.add);
+router.post('/login', usuarioController.login);
 
 
 module.exports = router;

@@ -1,16 +1,29 @@
-const {
-    User
-} = require('../models/');
+const {Usuario} = require('../models/');
 const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
+const servToken = require('./services/token')
 
 
-exports = {
-    list :async (req, res, next) =>[
-        res.status(200).send('Hay que hacerlo')
-    ],
+module.exports = {
+    list :async (req, res, next) =>{
+        try {
+        const re = await Usuario.findAll()
+        res.status(200).json(re)
+        
+        
+        } catch (error) {
+            res.status(500).json({'error': 'Oops paso algo'})
+        next(error)
+        }
+    },
     register :async (req, res, next) =>{
-    
+        try {
+            //Register prueba
+            const re = await Usuario.create(req.body)
+            res.status(200).json(re)
+        } catch (error) {
+           res.status(500).json({'error': 'Oops paso algo'})
+          next(error)
+        }
     },
     login : async (req, res, next) => {
 
@@ -24,14 +37,7 @@ exports = {
                 // Evaluar contraseña
                 const contrasenhaValida = bcrypt.compareSync(req.body.password, user.password)
                 if (contrasenhaValida) {
-                    const token = jwt.sign({
-                        id: user.id,
-                        username: user.username,
-                        email: user.username,
-                        rol: user.rol,
-                    }, 'mipalabrasecreta', {
-                        expiresIn: 3600
-                    })
+                    const token = servToken.encode(user.id, user.rol) 
 
                     res.status(200).send({
                         auth: true,
@@ -40,22 +46,18 @@ exports = {
                     })
 
                 } else {
-                    res.status(401).json({
-                        'error': 'Usuario o contraseña invalidos'
-                    })
+                    res.status(401).send({auth: false, tokenReturn: null, reason:'Contraseña no coincide'})
                 }
 
             } else {
-                res.status(401).json({
-                    'error': 'Usuario o contraseña invalidos'
-                })
+                res.status(404).send( 'Usuario no existe')
             }
 
         } catch (error) {
             res.status(500).json({
                 'error': 'Oops paso algo'
             })
-            next()
+            next(error)
         }
 
 

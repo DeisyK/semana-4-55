@@ -6,10 +6,10 @@ const router = routerx();
 
 
 router.get('/list', categoriaController.list);
-router.get('/add', categoriaController.add);
-router.get('/update', categoriaController.update);
-router.get('/activate', categoriaController.activate);
-router.get('/desactivate', categoriaController.desactivate);
+router.post('/add', categoriaController.add);
+router.put('/update', categoriaController.update);
+router.put('/activate', categoriaController.activate);
+router.put('/deactivate', categoriaController.deactivate);
 
 
 module.exports = router;
