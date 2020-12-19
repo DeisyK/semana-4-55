@@ -31,7 +31,7 @@ module.exports = {
    },
    activate: async (req, res, next) => {
       try {
-         const re = await Categoria.update({estado: 0},{where:{id: req.body.id}})
+         const re = await Categoria.update({estado: 1},{where:{id: req.body.id}})
          res.status(200).json(re)
       } catch (error) {
          res.status(500).json({'error': 'Oops paso algo'})
