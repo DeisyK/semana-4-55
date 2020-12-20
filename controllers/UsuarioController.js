@@ -68,16 +68,40 @@ module.exports = {
             const user = await Usuario.findOne({where: {email: req.body.email}})
 
             //Ver si la contraseña es valida
-            const contrasenhaValida = bcrypt.compareSync(req.body.password, user.password)
+            const validPassword = bcrypt.compareSync(req.body.password, user.password)
 
             //Buscar mi contraseña encriptada
-            const newEncriptePassword = bcrypt.hashSync(req.body.newpassword)
-            if (validPassword){
-                const re = await Usuario.update({nombre: req.body.nombre, password: newEncriptePassword},{where:{id: req.body.id}})
-            }
-            else{
-                res.status(401).send({auth: false, tokenReturn: null, reason:'Contraseña no coincide'})
-            }
+            // const newEncriptePassword = bcrypt.hashSync(req.body.newpassword)
+            // if (validPassword){
+            //     const re = await Usuario.update({nombre: req.body.nombre, password: newEncriptePassword},{where:{id: req.body.id}})
+            // }
+            // else{
+            //     res.status(401).send({auth: false, tokenReturn: null, reason:'Contraseña no coincide'})
+            // }
+            // res.status(200).json(re)
+            const newEncriptePassword = bcrypt.hashSync(req.body.password)
+            const re = await Usuario.update({nombre: req.body.nombre, rol:req.body.rol, password: newEncriptePassword,
+                    email: req.body.email},{where:{id: req.body.id}})
+            res.status(200).json(re)
+
+
+        } catch (error) {
+           res.status(500).json({'error': 'Oops paso algo'})
+          next(error)
+        }
+     },
+     activate: async (req, res, next) => {
+        try {
+           const re = await Usuario.update({estado: 1},{where:{id: req.body.id}})
+           res.status(200).json(re)
+        } catch (error) {
+           res.status(500).json({'error': 'Oops paso algo'})
+          next(error)
+        }
+     },
+     deactivate: async (req, res, next) => {
+        try {
+           const re = await Usuario.update({estado: 0},{where:{id: req.body.id}})
            res.status(200).json(re)
         } catch (error) {
            res.status(500).json({'error': 'Oops paso algo'})
