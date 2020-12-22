@@ -18,12 +18,16 @@ module.exports = {
     add :async (req, res, next) =>{
         try {
             //Register prueba
-            const re = await Usuario.create(req.body)
+            const newEncriptePassword = bcrypt.hashSync(req.body.password)
+            const re = await Usuario.create({nombre: req.body.nombre, rol:req.body.rol, password: newEncriptePassword,
+                email: req.body.email, estado: req.body.estado})
             res.status(200).json(re)
+            
         } catch (error) {
            res.status(500).json({'error': 'Oops paso algo'})
           next(error)
         }
+        
     },
     login : async (req, res, next) => {
 
@@ -65,10 +69,10 @@ module.exports = {
     update: async (req, res, next) => {
         try {
             //Buscar al usuario
-            const user = await Usuario.findOne({where: {email: req.body.email}})
+            // const user = await Usuario.findOne({where: {email: req.body.email}})
 
             //Ver si la contraseña es valida
-            const validPassword = bcrypt.compareSync(req.body.password, user.password)
+            // const validPassword = bcrypt.compareSync(req.body.password, user.password)
 
             //Buscar mi contraseña encriptada
             // const newEncriptePassword = bcrypt.hashSync(req.body.newpassword)
@@ -82,18 +86,20 @@ module.exports = {
             const newEncriptePassword = bcrypt.hashSync(req.body.password)
             const re = await Usuario.update({nombre: req.body.nombre, rol:req.body.rol, password: newEncriptePassword,
                     email: req.body.email},{where:{id: req.body.id}})
-            res.status(200).json(re)
-
-
+            const updatedUser = await Usuario.findOne({where:{id: req.body.id}})
+            res.status(200).json(updatedUser)
         } catch (error) {
            res.status(500).json({'error': 'Oops paso algo'})
           next(error)
         }
+
      },
      activate: async (req, res, next) => {
         try {
            const re = await Usuario.update({estado: 1},{where:{id: req.body.id}})
-           res.status(200).json(re)
+        //    res.status(200).json(re)
+        const activatedUser = await Usuario.findOne({where:{id: req.body.id}})
+        res.status(200).json(activatedUser)
         } catch (error) {
            res.status(500).json({'error': 'Oops paso algo'})
           next(error)
@@ -102,7 +108,9 @@ module.exports = {
      deactivate: async (req, res, next) => {
         try {
            const re = await Usuario.update({estado: 0},{where:{id: req.body.id}})
-           res.status(200).json(re)
+        //    res.status(200).json(re)
+        const deactivatedUser = await Usuario.findOne({where:{id: req.body.id}})
+        res.status(200).json(deactivatedUser)
         } catch (error) {
            res.status(500).json({'error': 'Oops paso algo'})
           next(error)
