@@ -23,6 +23,9 @@ module.exports = {
       categoriaId: {
         type: Sequelize.INTEGER
       },
+      urlImagen: {
+        type: Sequelize.STRING
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
